@@ -10,7 +10,9 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	if request.Method != "POST" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
-		response.Write([]byte(`{ "error": "Method not allowed" }`))
+		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 
@@ -18,7 +20,9 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	var newUser User
 	if err := json.NewDecoder(request.Body).Decode(&newUser); err != nil {
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(`{ "error": "Bad request" }`))
+		if _, err := response.Write([]byte(`{ "error": "Bad request" }`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 
@@ -30,6 +34,8 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("Creating customer", newUser)
 
 	//Return newly created user
-	json.NewEncoder(response).Encode(newUser)
+	if err := json.NewEncoder(response).Encode(newUser); err != nil {
+		panic(err)
+	}
 
 }

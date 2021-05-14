@@ -9,14 +9,18 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	if request.Method != "PUT" && request.Method != "PATCH" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
-		response.Write([]byte(`{ "error": "Method not allowed" }`))
+		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 
 	var updateUser User
 	if err := json.NewDecoder(request.Body).Decode(&updateUser); err != nil {
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(`{ "error": "Bad request" }`))
+		if _, err := response.Write([]byte(`{ "error": "Bad request" }`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 	responseEncoder := json.NewEncoder(response)
@@ -24,7 +28,9 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		for idx, _ := range users {
 			if users[idx].Id == updateUser.Id {
 				users[idx] = updateUser
-				responseEncoder.Encode(users[idx])
+				if err := responseEncoder.Encode(users[idx]); err != nil {
+					panic(err)
+				}
 				return
 			}
 		}
@@ -46,12 +52,16 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 					users[idx].Phone = updateUser.Phone
 				}
 				response.WriteHeader(http.StatusOK)
-				responseEncoder.Encode(users[idx])
+				if err := responseEncoder.Encode(users[idx]); err != nil {
+					panic(err)
+				}
 				return
 			}
 		}
 	}
 
 	users = append(users, updateUser)
-	responseEncoder.Encode(updateUser)
+	if err := responseEncoder.Encode(updateUser); err != nil {
+		panic(err)
+	}
 }

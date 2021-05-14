@@ -7,6 +7,7 @@ import (
 
 func updateCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	//Only PUT and PATCH requests allowed
 	if request.Method != "PUT" && request.Method != "PATCH" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
@@ -15,6 +16,7 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	//Decode and check for error
 	var updateUser User
 	if err := json.NewDecoder(request.Body).Decode(&updateUser); err != nil {
 		response.WriteHeader(http.StatusBadRequest)
@@ -23,7 +25,9 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		}
 		return
 	}
+
 	responseEncoder := json.NewEncoder(response)
+	//PUT request: update all user details
 	if request.Method == "PUT" {
 		for idx, _ := range users {
 			if users[idx].Id == updateUser.Id {
@@ -36,6 +40,7 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		}
 	}
 
+	//PATCH request: update only the values provided
 	if request.Method == "PATCH" {
 		for idx, _ := range users {
 			if users[idx].Id == updateUser.Id {
@@ -60,6 +65,7 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		}
 	}
 
+	//create user if does not exist
 	users = append(users, updateUser)
 	if err := responseEncoder.Encode(updateUser); err != nil {
 		panic(err)

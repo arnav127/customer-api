@@ -8,6 +8,7 @@ import (
 
 func createCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	//Only POST requests allowed
 	if request.Method != "POST" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
@@ -29,7 +30,7 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	//TODO: validate user before adding to map
 	//validate(newUser)
 
-	//add user to map
+	//add user to slice
 	users = append(users, newUser)
 	fmt.Println("Creating customer", newUser)
 

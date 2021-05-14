@@ -7,6 +7,7 @@ import (
 
 func listAllCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	//Only GET requests allowed
 	if request.Method != "GET" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
@@ -15,7 +16,7 @@ func listAllCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//Return user list
+	//Return user slice
 	if err := json.NewEncoder(response).Encode(users); err != nil {
 		panic(err)
 	}

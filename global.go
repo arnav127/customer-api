@@ -1,5 +1,6 @@
 package main
 
+// User Struct to store user details
 type User struct {
 	Id        string `json:"id"`
 	FirstName string `json:"first_name"`
@@ -8,4 +9,5 @@ type User struct {
 	Phone     int    `json:"phone"`
 }
 
+// users slice to store all users
 var users []User

@@ -10,7 +10,9 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	if request.Method != "GET" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
-		response.Write([]byte(`{ "error": "Method not allowed" }`))
+		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 	searchByEmail := request.URL.Query()["email"]
@@ -19,15 +21,21 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 		for _, user := range users {
 			if strings.ToLower(user.Email) == strings.ToLower(searchByEmail[0]) &&
 				strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
-				json.NewEncoder(response).Encode(user)
+				if err := json.NewEncoder(response).Encode(user); err != nil {
+					panic(err)
+				}
 				return
 			}
 		}
 	} else {
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(`{"error": "Bad Request"}`))
+		if _, err := response.Write([]byte(`{"error": "Bad Request"}`)); err != nil {
+			panic(err)
+		}
 		return
 	}
 	response.WriteHeader(http.StatusNotFound)
-	response.Write([]byte(`{"error": "Record not found"}`))
+	if _, err := response.Write([]byte(`{"error": "Record not found"}`)); err != nil {
+		panic(err)
+	}
 }

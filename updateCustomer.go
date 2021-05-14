@@ -26,6 +26,14 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	//validate user details provided
+	if err := validate(updateUser); err != nil {
+		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+			panic(err)
+		}
+		return
+	}
+
 	responseEncoder := json.NewEncoder(response)
 	//PUT request: update all user details
 	if request.Method == "PUT" {

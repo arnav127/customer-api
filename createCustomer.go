@@ -27,7 +27,7 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//Validate user before appending to slice
+	//validate user details provided
 	if err := validate(newUser); err != nil {
 		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
 			panic(err)

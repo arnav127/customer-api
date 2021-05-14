@@ -7,7 +7,7 @@ import (
 )
 
 func createCustomer(response http.ResponseWriter, request *http.Request) {
-
+	response.Header().Set("content-type", "application/json")
 	if request.Method != "POST" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		response.Write([]byte(`{ "error": "Method not allowed" }`))
@@ -30,7 +30,6 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("Creating customer", newUser)
 
 	//Return newly created user
-	response.Header().Set("content-type", "application/json")
 	json.NewEncoder(response).Encode(newUser)
 
 }

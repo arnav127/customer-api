@@ -27,8 +27,13 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//TODO: validate user before adding to map
-	//validate(newUser)
+	//Validate user before appending to slice
+	if err := validate(newUser); err != nil {
+		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+			panic(err)
+		}
+		return
+	}
 
 	//add user to slice
 	users = append(users, newUser)

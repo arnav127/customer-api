@@ -22,14 +22,19 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 		}
-	}
-	searchByFirstName := request.URL.Query()["first_name"]
-	if searchByFirstName != nil {
-		for _, user := range users {
-			if strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
-				json.NewEncoder(response).Encode(user)
-				return
+	} else {
+		searchByFirstName := request.URL.Query()["first_name"]
+		if searchByFirstName != nil {
+			for _, user := range users {
+				if strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
+					json.NewEncoder(response).Encode(user)
+					return
+				}
 			}
+		} else {
+			response.WriteHeader(http.StatusBadRequest)
+			response.Write([]byte(`{"error": "Bad Request"}`))
+			return
 		}
 	}
 	response.WriteHeader(http.StatusNotFound)

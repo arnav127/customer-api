@@ -22,6 +22,9 @@ func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 		}
+	} else {
+		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(`{ "error": "Bad Request" }`))
 	}
 	response.WriteHeader(http.StatusNotFound)
 	response.Write([]byte(`{ "error": "Customer does not exist" }`))

@@ -14,28 +14,19 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	searchByEmail := request.URL.Query()["email"]
-
-	if searchByEmail != nil {
+	searchByFirstName := request.URL.Query()["first_name"]
+	if searchByEmail != nil && searchByFirstName != nil {
 		for _, user := range users {
-			if strings.ToLower(user.Email) == strings.ToLower(searchByEmail[0]) {
+			if strings.ToLower(user.Email) == strings.ToLower(searchByEmail[0]) &&
+				strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
 				json.NewEncoder(response).Encode(user)
 				return
 			}
 		}
 	} else {
-		searchByFirstName := request.URL.Query()["first_name"]
-		if searchByFirstName != nil {
-			for _, user := range users {
-				if strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
-					json.NewEncoder(response).Encode(user)
-					return
-				}
-			}
-		} else {
-			response.WriteHeader(http.StatusBadRequest)
-			response.Write([]byte(`{"error": "Bad Request"}`))
-			return
-		}
+		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(`{"error": "Bad Request"}`))
+		return
 	}
 	response.WriteHeader(http.StatusNotFound)
 	response.Write([]byte(`{"error": "Record not found"}`))

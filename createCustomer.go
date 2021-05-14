@@ -26,7 +26,11 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 	//validate(newUser)
 
 	//add user to map
-	users[newUser.Id] = newUser
+	users = append(users, newUser)
 	fmt.Println("Creating customer", newUser)
+
+	//Return newly created user
+	response.Header().Set("content-type", "application/json")
+	json.NewEncoder(response).Encode(newUser)
 
 }

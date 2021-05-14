@@ -7,7 +7,7 @@ import (
 
 func main() {
 	//make map to store user details
-	users = make(map[string]User)
+	//users = make(map[string]User)
 
 	//TODO: api endpoints
 	http.HandleFunc("/users/create", createCustomer)

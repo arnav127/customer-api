@@ -8,4 +8,4 @@ type User struct {
 	Phone     int    `json:"phone"`
 }
 
-var users map[string]User
+var users []User

@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	//make map to store user details
 
 	//v1 api endpoints
 	http.HandleFunc("/v1/users/create", createCustomer)

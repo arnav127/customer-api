@@ -4,15 +4,15 @@ import "net/http"
 
 func handleCustomer(response http.ResponseWriter, request *http.Request) {
 	switch request.Method {
-	case "POST":
+	case http.MethodPost:
 		createCustomer(response, request)
-	case "GET":
+	case http.MethodGet:
 		searchCustomer(response, request)
-	case "DELETE":
+	case http.MethodDelete:
 		deleteCustomer(response, request)
-	case "PUT":
+	case http.MethodPut:
 		updateCustomer(response, request)
-	case "PATCH":
+	case http.MethodPatch:
 		updateCustomer(response, request)
 	default:
 		response.Header().Set("content-type", "application/json")

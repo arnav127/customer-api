@@ -9,7 +9,7 @@ import (
 func createCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	//Only POST requests allowed
-	if request.Method != "POST" {
+	if request.Method != http.MethodPost {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
 			panic(err)

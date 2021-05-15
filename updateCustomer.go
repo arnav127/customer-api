@@ -9,7 +9,7 @@ import (
 func updateCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	//Only PUT and PATCH requests allowed
-	if request.Method != "PUT" && request.Method != "PATCH" {
+	if request.Method != http.MethodPut && request.Method != http.MethodPatch {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
 			panic(err)
@@ -31,7 +31,7 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 
 	responseEncoder := json.NewEncoder(response)
 	//PUT request: update all user details
-	if request.Method == "PUT" {
+	if request.Method == http.MethodPut {
 		//validate user details provided
 		if err := validate(updateUser, false); err != nil {
 			fmt.Println("Sending back error")
@@ -59,7 +59,7 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 	}
 
 	//PATCH request: update only the values provided
-	if request.Method == "PATCH" {
+	if request.Method == http.MethodPatch {
 		//validate user details provided
 		if err := validate(updateUser, true); err != nil {
 			if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {

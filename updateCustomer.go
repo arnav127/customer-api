@@ -77,6 +77,12 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 		}
+
+		//If customer does not exist in record return an error
+		response.WriteHeader(http.StatusNotFound)
+		if _, err := response.Write([]byte(`{ "error": "Customer does not exist" }`)); err != nil {
+			panic(err)
+		}
 	}
 
 

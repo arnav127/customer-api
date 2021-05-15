@@ -7,7 +7,7 @@ import (
 func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	//Only GET and DELETE requests allowed
-	if request.Method != "GET" && request.Method != "DELETE" {
+	if request.Method != "DELETE" {
 		response.WriteHeader(http.StatusMethodNotAllowed)
 		if _, err := response.Write([]byte(`{ "error": "Method not allowed" }`)); err != nil {
 			panic(err)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -26,17 +27,20 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//validate user details provided
-	if err := validate(updateUser); err != nil {
-		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
-			panic(err)
-		}
-		return
-	}
+
 
 	responseEncoder := json.NewEncoder(response)
 	//PUT request: update all user details
 	if request.Method == "PUT" {
+		//validate user details provided
+		if err := validate(updateUser, false); err != nil {
+			fmt.Println("Sending back error")
+			response.WriteHeader(http.StatusBadRequest)
+			if _, errr := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); errr != nil {
+				panic(errr)
+			}
+			return
+		}
 		for idx, _ := range users {
 			if users[idx].Id == updateUser.Id {
 				users[idx] = updateUser
@@ -56,6 +60,13 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 
 	//PATCH request: update only the values provided
 	if request.Method == "PATCH" {
+		//validate user details provided
+		if err := validate(updateUser, true); err != nil {
+			if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+				panic(err)
+			}
+			return
+		}
 		for idx, _ := range users {
 			if users[idx].Id == updateUser.Id {
 				if updateUser.FirstName != "" {

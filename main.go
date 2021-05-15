@@ -9,11 +9,11 @@ func main() {
 	//make map to store user details
 
 	//Api endpoints
-	http.HandleFunc("/users/create", createCustomer)
-	http.HandleFunc("/users/update", updateCustomer)
-	http.HandleFunc("/users/delete", deleteCustomer)
-	http.HandleFunc("/users/list", listAllCustomer)
-	http.HandleFunc("/users/search", searchCustomer)
+	http.HandleFunc("/v1/users/create", createCustomer)
+	http.HandleFunc("/v1/users/update", updateCustomer)
+	http.HandleFunc("/v1/users/delete", deleteCustomer)
+	http.HandleFunc("/v1/users/list", listAllCustomer)
+	http.HandleFunc("/v1/users/search", searchCustomer)
 
 	fmt.Println("Server started")
 

@@ -46,6 +46,12 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 		}
+
+		//create user if does not exist
+		users = append(users, updateUser)
+		if err := responseEncoder.Encode(updateUser); err != nil {
+			panic(err)
+		}
 	}
 
 	//PATCH request: update only the values provided
@@ -73,9 +79,5 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	//create user if does not exist
-	users = append(users, updateUser)
-	if err := responseEncoder.Encode(updateUser); err != nil {
-		panic(err)
-	}
+
 }

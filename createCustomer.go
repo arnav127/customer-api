@@ -29,6 +29,7 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 
 	//validate user details provided
 	if err := validate(newUser, false); err != nil {
+		response.WriteHeader(http.StatusBadRequest)
 		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
 			panic(err)
 		}

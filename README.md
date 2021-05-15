@@ -19,7 +19,7 @@ View the API documentation here: https://documenter.getpostman.com/view/12544023
 - List All customers
 - Search customer
 
-## Status & Error Codes
+## Status & Error Codes (Version 2 API)
 
 - ### Creating User: `POST /user`
     - Successful Response: `200`
@@ -47,7 +47,7 @@ View the API documentation here: https://documenter.getpostman.com/view/12544023
     - User Not Found: `404`
 
 
-## Version 1 endpoints
+## Version 1 endpoints (deprecated)
 ### Create Customer `/users/create`
 
 ### Update Customer  `/users/update`

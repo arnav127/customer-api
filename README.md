@@ -35,13 +35,13 @@ View the API documentation here: https://documenter.getpostman.com/view/12544023
     - Invalid Request: `400`
     - User Not Found: `404`
 
-- ### Update User: `PUT /user`   `PATCH /user`
+- ### Update User: `PUT /user?id={id}`   `PATCH /user?id={id}`
     - Successful Response: `200`
     - Invalid Request: `400`
     - Invalid User Details: `400`
     - User Not Found: `404`
 
-- ### Delete User: `DELETE /user`
+- ### Delete User: `DELETE /user?id={id}`
     - Successful Response: `204`
     - Invalid Request: `400`
     - User Not Found: `404`

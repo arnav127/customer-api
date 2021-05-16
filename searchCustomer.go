@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strings"
 )
 
 func searchCustomer(response http.ResponseWriter, request *http.Request) {
@@ -21,16 +21,23 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 	searchByEmail := request.URL.Query()["email"]
 	searchByFirstName := request.URL.Query()["first_name"]
 	if searchByEmail != nil && searchByFirstName != nil {
-		for _, user := range users {
-			//Ignoring string case while comparing
-			if strings.ToLower(user.Email) == strings.ToLower(searchByEmail[0]) &&
-				strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
-				//Return user if found
-				if err := json.NewEncoder(response).Encode(user); err != nil {
-					panic(err)
-				}
-				return
+		queryString := fmt.Sprintf("select id, firstname, lastname, email, phone from users where email='%s' and firstname='%s'",
+			searchByEmail[0], searchByFirstName[0])
+		query, err := db.Query(queryString)
+		if err != nil {
+			panic(err)
+		}
+		defer query.Close()
+		var userResult User
+		if query.Next() {
+			err = query.Scan(&userResult.Id, &userResult.FirstName, &userResult.LastName, &userResult.Email, &userResult.Phone)
+			if err != nil {
+				panic(err)
 			}
+			if err := json.NewEncoder(response).Encode(userResult); err != nil {
+				panic(err)
+			}
+			return
 		}
 	} else {
 		//Both email and first_name cannot be queried from URL

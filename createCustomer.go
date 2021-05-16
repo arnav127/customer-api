@@ -1,9 +1,7 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -37,34 +35,25 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//add user to database
-	queryString := fmt.Sprintf("insert into users values ('%v', '%v', '%v', '%v', '%v') "+
-		"returning id, firstname, lastname, email, phone",
-		newUser.Id, newUser.FirstName, newUser.LastName, newUser.Email, newUser.Phone)
-	query, err := db.Query(queryString)
-	if err != nil {
-		response.WriteHeader(http.StatusBadRequest)
-		if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
-			panic(err)
-		}
-		return
-	}
-	defer func(query *sql.Rows) {
-		err := query.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(query)
 	var user User
-	if query.Next() {
-		err = query.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
-		if err != nil {
+	const queryString = "insert into users values ($1, $2, $3, $4, $5) returning id, firstname, lastname, email, phone"
+
+	//add user to database and scan row returned
+	rowReturned := db.QueryRow(queryString, newUser.Id, newUser.FirstName, newUser.LastName, newUser.Email, newUser.Phone)
+	err := rowReturned.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
+
+	switch err {
+	//row returned successfully
+	case nil:
+		if err := json.NewEncoder(response).Encode(user); err != nil {
+			panic(err)
+		}
+	//error creating row
+	default:
+		response.WriteHeader(http.StatusBadRequest)
+		if _, err := response.Write([]byte(`{ "error" : "Could not create customer" }`)); err != nil {
 			panic(err)
 		}
 	}
-	if err := json.NewEncoder(response).Encode(user); err != nil {
-		panic(err)
-	}
-	fmt.Println("Creating customer", user)
 
 }

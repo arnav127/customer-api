@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -19,19 +18,26 @@ func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 	// Check if id present in URL
 	deleteID := request.URL.Query()["id"]
 	if deleteID != nil {
-		var user User
-		queryString := fmt.Sprintf("delete from users where id='%v' returning *", deleteID[0])
-		query, err := db.Query(queryString)
+		//var user User
+		const queryString = "delete from users where id=$1 returning *"
+		query, err := db.Exec(queryString, deleteID[0])
 		if err != nil {
 			panic(err)
 		}
-		if query.Next() {
-			err = query.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
-			if err != nil {
+		rowsAffected, err := query.RowsAffected()
+		if err != nil {
+			if _, err := response.Write([]byte(`{ "error": "` + err.Error() +`" }`)); err != nil {
 				panic(err)
 			}
+		}
+		switch rowsAffected{
+		case 1:
 			response.WriteHeader(http.StatusNoContent)
-			return
+		default:
+			response.WriteHeader(http.StatusNotFound)
+			if _, err := response.Write([]byte(`{ "error": "Customer does not exist" }`)); err != nil {
+				panic(err)
+			}
 		}
 
 	} else {
@@ -41,11 +47,4 @@ func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 	}
-
-	//return error when user not found
-	response.WriteHeader(http.StatusNotFound)
-	if _, err := response.Write([]byte(`{ "error": "Customer does not exist" }`)); err != nil {
-		panic(err)
-	}
-
 }

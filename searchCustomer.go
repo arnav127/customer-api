@@ -1,8 +1,8 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -21,23 +21,28 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 	searchByEmail := request.URL.Query()["email"]
 	searchByFirstName := request.URL.Query()["first_name"]
 	if searchByEmail != nil && searchByFirstName != nil {
-		queryString := fmt.Sprintf("select id, firstname, lastname, email, phone from users where email='%s' and firstname='%s'",
-			searchByEmail[0], searchByFirstName[0])
-		query, err := db.Query(queryString)
-		if err != nil {
-			panic(err)
-		}
-		defer query.Close()
+
 		var userResult User
-		if query.Next() {
-			err = query.Scan(&userResult.Id, &userResult.FirstName, &userResult.LastName, &userResult.Email, &userResult.Phone)
-			if err != nil {
-				panic(err)
-			}
+		const queryString = "select id, firstname, lastname, email, phone from users where email=$1 and firstname=$2"
+
+		//Query database and generate userResult from row returned
+		row := db.QueryRow(queryString, searchByEmail[0], searchByFirstName[0])
+		err := row.Scan(&userResult.Id, &userResult.FirstName, &userResult.LastName, &userResult.Email, &userResult.Phone)
+
+		switch err {
+		//row returned successfully
+		case nil:
 			if err := json.NewEncoder(response).Encode(userResult); err != nil {
 				panic(err)
 			}
-			return
+		//no row returned
+		case sql.ErrNoRows:
+			response.WriteHeader(http.StatusNotFound)
+			if _, err := response.Write([]byte(`{"error": "Record not found"}`)); err != nil {
+				panic(err)
+			}
+		default:
+			panic(err)
 		}
 	} else {
 		//Both email and first_name cannot be queried from URL
@@ -45,12 +50,5 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 		if _, err := response.Write([]byte(`{"error": "Bad Request"}`)); err != nil {
 			panic(err)
 		}
-		return
-	}
-
-	//Return NotFound if user not in slice
-	response.WriteHeader(http.StatusNotFound)
-	if _, err := response.Write([]byte(`{"error": "Record not found"}`)); err != nil {
-		panic(err)
 	}
 }

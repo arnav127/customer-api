@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -36,13 +35,25 @@ func createCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//add user to slice
-	users = append(users, newUser)
-	fmt.Println("Creating customer", newUser)
+	var user User
+	const queryString = "insert into users values ($1, $2, $3, $4, $5) returning id, firstname, lastname, email, phone"
 
-	//Return newly created user
-	if err := json.NewEncoder(response).Encode(newUser); err != nil {
-		panic(err)
+	//add user to database and scan row returned
+	rowReturned := db.QueryRow(queryString, newUser.Id, newUser.FirstName, newUser.LastName, newUser.Email, newUser.Phone)
+	err := rowReturned.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
+
+	switch err {
+	//row returned successfully
+	case nil:
+		if err := json.NewEncoder(response).Encode(user); err != nil {
+			panic(err)
+		}
+	//error creating row
+	default:
+		response.WriteHeader(http.StatusBadRequest)
+		if _, err := response.Write([]byte(`{ "error" : "Could not create customer" }`)); err != nil {
+			panic(err)
+		}
 	}
 
 }

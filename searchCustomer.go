@@ -1,9 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strings"
 )
 
 func searchCustomer(response http.ResponseWriter, request *http.Request) {
@@ -21,16 +21,28 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 	searchByEmail := request.URL.Query()["email"]
 	searchByFirstName := request.URL.Query()["first_name"]
 	if searchByEmail != nil && searchByFirstName != nil {
-		for _, user := range users {
-			//Ignoring string case while comparing
-			if strings.ToLower(user.Email) == strings.ToLower(searchByEmail[0]) &&
-				strings.ToLower(user.FirstName) == strings.ToLower(searchByFirstName[0]) {
-				//Return user if found
-				if err := json.NewEncoder(response).Encode(user); err != nil {
-					panic(err)
-				}
-				return
+
+		var userResult User
+		const queryString = "select id, firstname, lastname, email, phone from users where email=$1 and firstname=$2"
+
+		//Query database and generate userResult from row returned
+		row := db.QueryRow(queryString, searchByEmail[0], searchByFirstName[0])
+		err := row.Scan(&userResult.Id, &userResult.FirstName, &userResult.LastName, &userResult.Email, &userResult.Phone)
+
+		switch err {
+		//row returned successfully
+		case nil:
+			if err := json.NewEncoder(response).Encode(userResult); err != nil {
+				panic(err)
 			}
+		//no row returned
+		case sql.ErrNoRows:
+			response.WriteHeader(http.StatusNotFound)
+			if _, err := response.Write([]byte(`{"error": "Record not found"}`)); err != nil {
+				panic(err)
+			}
+		default:
+			panic(err)
 		}
 	} else {
 		//Both email and first_name cannot be queried from URL
@@ -38,12 +50,5 @@ func searchCustomer(response http.ResponseWriter, request *http.Request) {
 		if _, err := response.Write([]byte(`{"error": "Bad Request"}`)); err != nil {
 			panic(err)
 		}
-		return
-	}
-
-	//Return NotFound if user not in slice
-	response.WriteHeader(http.StatusNotFound)
-	if _, err := response.Write([]byte(`{"error": "Record not found"}`)); err != nil {
-		panic(err)
 	}
 }

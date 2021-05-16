@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"regexp"
 )
@@ -14,8 +15,7 @@ type User struct {
 	Phone     int    `json:"phone"`
 }
 
-// users slice to store all users
-var users []User
+var db *sql.DB
 
 // validate : check if the user struct received is valid against set params
 func validate(user User, allowEmpty bool) error {
@@ -36,7 +36,7 @@ func validate(user User, allowEmpty bool) error {
 	}
 
 	if !(allowEmpty && user.LastName == "") {
-			if len(user.LastName) < minNameLength || len(user.LastName) > maxNameLength {
+		if len(user.LastName) < minNameLength || len(user.LastName) > maxNameLength {
 			return errors.New("last_name should be between 3 and 20 characters")
 		}
 	}
@@ -53,4 +53,23 @@ func validate(user User, allowEmpty bool) error {
 		}
 	}
 	return nil
+}
+
+func updateNonEmptyDetails(currentUser User, update User) User {
+	if update.Id != "" {
+		currentUser.Id = update.Id
+	}
+	if update.FirstName != "" {
+		currentUser.FirstName = update.FirstName
+	}
+	if update.LastName != "" {
+		currentUser.LastName = update.LastName
+	}
+	if update.Email != "" {
+		currentUser.Email = update.Email
+	}
+	if update.Phone != 0 {
+		currentUser.Phone = update.Phone
+	}
+	return currentUser
 }

@@ -16,8 +16,21 @@ func listAllCustomer(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//Return user slice
-	if err := json.NewEncoder(response).Encode(users); err != nil {
+	//query database and store results in slice
+	var user User
+	var usersList []User
+	rows, _ := db.Query("SELECT id, firstname, lastname, email, phone FROM users")
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
+		if err != nil {
+			panic(err)
+		}
+		usersList = append(usersList, user)
+	}
+
+	//Return userList obtained from database
+	if err := json.NewEncoder(response).Encode(usersList); err != nil {
 		panic(err)
 	}
 }

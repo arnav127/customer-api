@@ -54,3 +54,22 @@ func validate(user User, allowEmpty bool) error {
 	}
 	return nil
 }
+
+func updateNonEmptyDetails(currentUser User, update User) User {
+	if update.Id != "" {
+		currentUser.Id = update.Id
+	}
+	if update.FirstName != "" {
+		currentUser.FirstName = update.FirstName
+	}
+	if update.LastName != "" {
+		currentUser.LastName = update.LastName
+	}
+	if update.Email != "" {
+		currentUser.Email = update.Email
+	}
+	if update.Phone != 0 {
+		currentUser.Phone = update.Phone
+	}
+	return currentUser
+}

@@ -1,28 +1,27 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-func updateCustomerDB(updateId string, updateUser User) (User, error){
-	queryString := fmt.Sprintf("update users set id='%v', firstname='%v', lastname='%v', " +
-		"email='%v', phone=%v where id='%v' returning *",
-		updateUser.Id, updateUser.FirstName, updateUser.LastName, updateUser.Email, updateUser.Phone, updateId)
-	query, err := db.Query(queryString)
-	if err != nil {
-		//panic(err)
+func updateCustomerDB(updateId string, updateUser User) (User, error) {
+	var updatedUser User
+	const queryString = "update users set id=$1, firstname=$2, lastname=$3, email=$4, phone=$5 where id=$6 returning *"
+
+	//query db update user and scan returned row into updatedUser
+	row := db.QueryRow(queryString, updateUser.Id, updateUser.FirstName, updateUser.LastName, updateUser.Email, updateUser.Phone, updateId)
+	err := row.Scan(&updatedUser.Id, &updatedUser.FirstName, &updatedUser.LastName, &updatedUser.Email, &updatedUser.Phone)
+	switch err {
+	//user successfully updated
+	case nil:
+		return updatedUser, nil
+	//query not successful, return error
+	default:
 		return User{}, err
 	}
-	var updatedUser User
-	if query.Next() {
-		err = query.Scan(&updatedUser.Id, &updatedUser.FirstName, &updatedUser.LastName, &updatedUser.Email, &updatedUser.Phone)
-		if err != nil {
-			panic(err)
-		}
-	}
-	return updatedUser, nil
 }
 
 func updateCustomer(response http.ResponseWriter, request *http.Request) {
@@ -49,8 +48,6 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 	updateID := request.URL.Query()["id"]
 	if updateID != nil {
 
-		responseEncoder := json.NewEncoder(response)
-
 		//PUT request: update all user details
 		if request.Method == http.MethodPut {
 
@@ -58,22 +55,24 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 			if err := validate(updateUser, false); err != nil {
 				fmt.Println("Sending back error")
 				response.WriteHeader(http.StatusBadRequest)
-				if _, errr := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); errr != nil {
-					panic(errr)
-				}
-				return
-			}
-
-			updatedUser, err := updateCustomerDB(updateID[0], updateUser)
-			if err != nil {
-				response.WriteHeader(http.StatusBadRequest)
 				if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
 					panic(err)
 				}
 				return
 			}
-			if err := responseEncoder.Encode(updatedUser); err != nil {
-				panic(err)
+
+			updatedUser, err := updateCustomerDB(updateID[0], updateUser)
+			switch err {
+			case nil:
+				if err := json.NewEncoder(response).Encode(updatedUser); err != nil {
+					panic(err)
+				}
+			default:
+				response.WriteHeader(http.StatusBadRequest)
+				if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+					panic(err)
+				}
+
 			}
 		}
 
@@ -87,57 +86,47 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 
-			queryString := fmt.Sprintf("select id, firstname, lastname, email, phone from users where id='%s'", updateID[0])
-			query, err := db.Query(queryString)
-			if err != nil {
-				panic(err)
-			}
-			defer query.Close()
+			const queryString = "select id, firstname, lastname, email, phone from users where id=$1"
+			row := db.QueryRow(queryString, updateID[0])
 			var currentUser User
-			if query.Next() {
-				err = query.Scan(&currentUser.Id, &currentUser.FirstName, &currentUser.LastName, &currentUser.Email, &currentUser.Phone)
-				if err != nil {
-					panic(err)
+			err := row.Scan(&currentUser.Id, &currentUser.FirstName, &currentUser.LastName, &currentUser.Email, &currentUser.Phone)
+			switch err {
+			//user is in db
+			case nil:
+				//update current user struct to reflect provided attributes
+				updatedLocalUser := updateNonEmptyDetails(currentUser, updateUser)
+				//update the user in db
+				updatedDBUser, err := updateCustomerDB(updateID[0], updatedLocalUser)
+				switch err {
+				case nil:
+					response.WriteHeader(http.StatusOK)
+					if err := json.NewEncoder(response).Encode(updatedDBUser); err != nil {
+						panic(err)
+					}
+				default:
+					response.WriteHeader(http.StatusBadRequest)
+					if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+						panic(err)
+					}
 				}
-			} else {
+
+			//If customer does not exist in record return an error
+			case sql.ErrNoRows:
 				response.WriteHeader(http.StatusNotFound)
 				if _, err := response.Write([]byte(`{ "error": "Customer does not exist" }`)); err != nil {
 					panic(err)
 				}
 				return
-			}
-			if updateUser.Id != "" {
-				currentUser.Id = updateUser.Id
-			}
-			if updateUser.FirstName != "" {
-				currentUser.FirstName = updateUser.FirstName
-			}
-			if updateUser.LastName != "" {
-				currentUser.LastName = updateUser.LastName
-			}
-			if updateUser.Email != "" {
-				currentUser.Email = updateUser.Email
-			}
-			if updateUser.Phone != 0 {
-				currentUser.Phone = updateUser.Phone
-			}
 
-			response.WriteHeader(http.StatusOK)
-			updatedUser, err := updateCustomerDB(updateID[0], currentUser)
-			if err != nil {
-				response.WriteHeader(http.StatusBadRequest)
-				if _, err := response.Write([]byte(`{ "error" : "` + err.Error() + `" 	}`)); err != nil {
+			default:
+				response.WriteHeader(http.StatusNotFound)
+				if _, err := response.Write([]byte(`{ "error": "` + err.Error() + `" }`)); err != nil {
 					panic(err)
 				}
 				return
 			}
-			if err := responseEncoder.Encode(updatedUser); err != nil {
-				panic(err)
-			}
-			return
 		}
-		//If customer does not exist in record return an error
-		} else {
+	} else {
 		response.WriteHeader(http.StatusBadRequest)
 		if _, err := response.Write([]byte(`{ "error": "Bad Request"`)); err != nil {
 			panic(err)

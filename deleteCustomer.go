@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -18,16 +19,21 @@ func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 	// Check if id present in URL
 	deleteID := request.URL.Query()["id"]
 	if deleteID != nil {
-		for idx, user := range users {
-			if user.Id == deleteID[0] {
-				//Swap user to delete with last user in slice and reduce slice length by 1
-				totalUsers := len(users)
-				users[totalUsers-1], users[idx] = users[idx], users[totalUsers-1]
-				users = users[:totalUsers-1]
-				response.WriteHeader(http.StatusNoContent)
-				return
-			}
+		var user User
+		queryString := fmt.Sprintf("delete from users where id='%v' returning *", deleteID[0])
+		query, err := db.Query(queryString)
+		if err != nil {
+			panic(err)
 		}
+		if query.Next() {
+			err = query.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Phone)
+			if err != nil {
+				panic(err)
+			}
+			response.WriteHeader(http.StatusNoContent)
+			return
+		}
+
 	} else {
 		//Id not present in parameter
 		response.WriteHeader(http.StatusBadRequest)

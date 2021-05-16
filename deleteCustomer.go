@@ -26,11 +26,11 @@ func deleteCustomer(response http.ResponseWriter, request *http.Request) {
 		}
 		rowsAffected, err := query.RowsAffected()
 		if err != nil {
-			if _, err := response.Write([]byte(`{ "error": "` + err.Error() +`" }`)); err != nil {
+			if _, err := response.Write([]byte(`{ "error": "` + err.Error() + `" }`)); err != nil {
 				panic(err)
 			}
 		}
-		switch rowsAffected{
+		switch rowsAffected {
 		case 1:
 			response.WriteHeader(http.StatusNoContent)
 		default:

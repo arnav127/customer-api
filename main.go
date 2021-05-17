@@ -28,6 +28,7 @@ func main() {
 
 	//v2 api endpoints
 	http.HandleFunc("/v2/user", handleCustomer)
+	http.HandleFunc("/v2/user/", getCustomer)
 	http.HandleFunc("/v2/users/", listAllCustomer)
 
 	fmt.Println("Server started")

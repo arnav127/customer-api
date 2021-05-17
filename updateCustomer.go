@@ -1,27 +1,64 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-func updateCustomerDB(updateId string, updateUser User) (User, error) {
-	var updatedUser User
+func updateCustomerDB(updateId string, updateUser User) error {
 	const queryString = "update users set id=$1, firstname=$2, lastname=$3, email=$4, phone=$5 where id=$6 returning *"
+	const queryUpdateFirstname = "update users set firstname=$1 where id=$2"
+	const queryUpdateLastname = "update users set lastname=$1 where id=$2"
+	const queryUpdateEmail = "update users set email=$1 where id=$2"
+	const queryUpdatePhone = "update users set phone=$1 where id=$2"
+	const queryUpdateId = "update users set id=$1 where id=$2"
 
-	//query db update user and scan returned row into updatedUser
-	row := db.QueryRow(queryString, updateUser.Id, updateUser.FirstName, updateUser.LastName, updateUser.Email, updateUser.Phone, updateId)
-	err := row.Scan(&updatedUser.Id, &updatedUser.FirstName, &updatedUser.LastName, &updatedUser.Email, &updatedUser.Phone)
-	switch err {
-	//user successfully updated
-	case nil:
-		return updatedUser, nil
-	//query not successful, return error
-	default:
-		return User{}, err
+	//begin transaction
+	ctx := context.Background()
+	updateTransaction, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		panic(err)
 	}
+
+	//update firstname
+	_, err = updateTransaction.ExecContext(ctx, queryUpdateFirstname, updateUser.FirstName, updateId)
+	if err != nil {
+		updateTransaction.Rollback()
+		return err
+	}
+	//update lastname
+	_, err = updateTransaction.ExecContext(ctx, queryUpdateLastname, updateUser.LastName, updateId)
+	if err != nil {
+		updateTransaction.Rollback()
+		return err
+	}
+	//update email
+	_, err = updateTransaction.ExecContext(ctx, queryUpdateEmail, updateUser.Email, updateId)
+	if err != nil {
+		updateTransaction.Rollback()
+		return err
+	}
+	//update phone
+	_, err = updateTransaction.ExecContext(ctx, queryUpdatePhone, updateUser.Phone, updateId)
+	if err != nil {
+		updateTransaction.Rollback()
+		return err
+	}
+	//update id
+	_, err = updateTransaction.ExecContext(ctx, queryUpdateId, updateUser.Id, updateId)
+	if err != nil {
+		updateTransaction.Rollback()
+		return err
+	}
+	//commit transaction
+	err = updateTransaction.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func updateCustomer(response http.ResponseWriter, request *http.Request) {
@@ -61,10 +98,10 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 				return
 			}
 
-			updatedUser, err := updateCustomerDB(updateID[0], updateUser)
+			err := updateCustomerDB(updateID[0], updateUser)
 			switch err {
 			case nil:
-				if err := json.NewEncoder(response).Encode(updatedUser); err != nil {
+				if err := json.NewEncoder(response).Encode(updateUser); err != nil {
 					panic(err)
 				}
 			default:
@@ -96,11 +133,11 @@ func updateCustomer(response http.ResponseWriter, request *http.Request) {
 				//update current user struct to reflect provided attributes
 				updatedLocalUser := updateNonEmptyDetails(currentUser, updateUser)
 				//update the user in db
-				updatedDBUser, err := updateCustomerDB(updateID[0], updatedLocalUser)
+				err := updateCustomerDB(updateID[0], updatedLocalUser)
 				switch err {
 				case nil:
 					response.WriteHeader(http.StatusOK)
-					if err := json.NewEncoder(response).Encode(updatedDBUser); err != nil {
+					if err := json.NewEncoder(response).Encode(updatedLocalUser); err != nil {
 						panic(err)
 					}
 				default:

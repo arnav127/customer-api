@@ -1,6 +1,6 @@
 # Customer API
 Basic CRUD Customer API in Golang.  
-View the API documentation here: https://documenter.getpostman.com/view/12544023/TzRVgSRg
+View the API documentation here: https://documenter.getpostman.com/view/12544023/TzRX8kDx
 
 ## Customer Struct Fields:  
 

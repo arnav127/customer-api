@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"database/sql"
@@ -6,8 +6,8 @@ import (
 	"regexp"
 )
 
-// User Struct to store user details
-type User struct {
+// OwnUser Struct to store user details
+type OwnUser struct {
 	Id        string `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -15,10 +15,10 @@ type User struct {
 	Phone     int    `json:"phone"`
 }
 
-var db *sql.DB
+var Db *sql.DB
 
 // validate : check if the user struct received is valid against set params
-func validate(user User, allowEmpty bool) error {
+func validate(user *User, allowEmpty bool) error {
 	const minNameLength, maxNameLength = 3, 20
 	const emailRegexString = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
 	var emailRegex = regexp.MustCompile(emailRegexString)
@@ -55,7 +55,7 @@ func validate(user User, allowEmpty bool) error {
 	return nil
 }
 
-func updateNonEmptyDetails(currentUser User, update User) User {
+func updateNonEmptyDetails(currentUser *User, update *User) *User {
 	if update.Id != "" {
 		currentUser.Id = update.Id
 	}

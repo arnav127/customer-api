@@ -29,7 +29,11 @@ View the API documentation here: https://documenter.getpostman.com/view/12544023
 - ### List All Users: `GET /users`
     - Successful Response: `200`
     - Wrong Method: `405`
-     
+
+- ### Get User: `GET /user/{id}`
+  - Successful Response: `200`
+  - User Not Found: `404`
+
 - ### Search User: `GET /user?email={email}&first_name={first_name}`
     - Successful Response: `200`
     - Invalid Request: `400`

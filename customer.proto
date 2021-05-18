@@ -39,12 +39,9 @@ message UpdateCustomerRequest {
 
 service CustomerService {
     rpc CreateCustomerService(CreateUserRequest) returns (User) {}
-    rpc GetCustomer(GetCustomerRequest) returns (User) {
-    }
+    rpc GetCustomer(GetCustomerRequest) returns (User) {}
     rpc SearchCustomer(SearchCustomerRequest) returns (User) {}
-    rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {
-
-    }
+    rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {}
     rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {}
     rpc DeleteCustomer(DeleteCustomerRequest) returns (.google.protobuf.Empty) {}
 }

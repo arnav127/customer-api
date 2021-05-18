@@ -4,7 +4,7 @@ package appointy.customer.v2;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "/";
+option go_package = "proto/";
 
 
 message User {

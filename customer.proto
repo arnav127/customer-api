@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package appointy.customer.v2;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "proto/";
+
+
+message User {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    int64 phone = 5;
+}
+
+message GetCustomerRequest {
+    string id = 1;
+}
+
+message DeleteCustomerRequest {
+    string id = 1;
+}
+
+message SearchCustomerRequest {
+    string email = 1;
+    string first_name = 2;
+}
+
+message CreateUserRequest {
+    User user = 1;
+}
+
+message UpdateCustomerRequest {
+    string user_id = 1;
+    User user = 2;
+}
+
+service CustomerService {
+    rpc CreateCustomerService(CreateUserRequest) returns (User) {}
+    rpc GetCustomer(GetCustomerRequest) returns (User) {}
+    rpc SearchCustomer(SearchCustomerRequest) returns (User) {}
+    rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {}
+    rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {}
+    rpc DeleteCustomer(DeleteCustomerRequest) returns (.google.protobuf.Empty) {}
+}

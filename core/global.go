@@ -1,13 +1,13 @@
-package server
+package core
 
 import (
-	"database/sql"
 	"errors"
+	customer_api "gitlab.com/arnavdixit/customer-api"
 	"regexp"
 )
 
-// OwnUser Struct to store user details
-type OwnUser struct {
+// DbUser Struct to store user details
+type DbUser struct {
 	Id        string `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -15,10 +15,10 @@ type OwnUser struct {
 	Phone     int    `json:"phone"`
 }
 
-var Db *sql.DB
+//var Db *sql.DB
 
 // validate : check if the user struct received is valid against set params
-func validate(user *User, allowEmpty bool) error {
+func validate(user *customer_api.DbUser, allowEmpty bool) error {
 	const minNameLength, maxNameLength = 3, 20
 	const emailRegexString = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
 	var emailRegex = regexp.MustCompile(emailRegexString)
@@ -55,7 +55,7 @@ func validate(user *User, allowEmpty bool) error {
 	return nil
 }
 
-func updateNonEmptyDetails(currentUser *User, update *User) *User {
+func updateNonEmptyDetails(currentUser *customer_api.DbUser, update *customer_api.DbUser) *customer_api.DbUser {
 	if update.Id != "" {
 		currentUser.Id = update.Id
 	}

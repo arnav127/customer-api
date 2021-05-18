@@ -1,17 +1,18 @@
-package server
+package core
 
 import (
 	"database/sql"
 	"errors"
+	customer_api "gitlab.com/arnavdixit/customer-api"
 )
 
-func SearchCustomer(email string, firstName string) (*User, error) {
+func (s *Service) SearchCustomer(email string, firstName string) (*customer_api.DbUser, error) {
 
-		var userResult User
+		var userResult customer_api.DbUser
 		const queryString = "select id, firstname, lastname, email, phone from users where email=$1 and firstname=$2"
 
 		//Query database and generate userResult from row returned
-		row := Db.QueryRow(queryString, email, firstName)
+		row := s.Db.QueryRow(queryString, email, firstName)
 		err := row.Scan(&userResult.Id, &userResult.FirstName, &userResult.LastName, &userResult.Email, &userResult.Phone)
 
 		switch err {

@@ -1,12 +1,13 @@
-package server
+package core
 
 import (
 	"context"
 	"database/sql"
 	"errors"
+	customer_api "gitlab.com/arnavdixit/customer-api"
 )
 
-func updateCustomerDB(updateId string, updateUser *User) error {
+func updateCustomerDB(Db *sql.DB, updateId string, updateUser *customer_api.DbUser) error {
 	const queryString = "update users set id=$1, firstname=$2, lastname=$3, email=$4, phone=$5 where id=$6 returning *"
 	const queryUpdateFirstname = "update users set firstname=$1 where id=$2"
 	const queryUpdateLastname = "update users set lastname=$1 where id=$2"
@@ -59,7 +60,7 @@ func updateCustomerDB(updateId string, updateUser *User) error {
 	return nil
 }
 
-func UpdateCustomer(userId string, updateUser *User) (*User, error) {
+func (s *Service) UpdateCustomer(userId string, updateUser *customer_api.DbUser) (*customer_api.DbUser, error) {
 
 		//
 		////PUT request: update all user details
@@ -87,8 +88,8 @@ func UpdateCustomer(userId string, updateUser *User) (*User, error) {
 		}
 
 		const queryString = "select id, firstname, lastname, email, phone from users where id=$1"
-		row := Db.QueryRow(queryString, userId)
-		var currentUser User
+		row := s.Db.QueryRow(queryString, userId)
+		var currentUser customer_api.DbUser
 		err := row.Scan(&currentUser.Id, &currentUser.FirstName, &currentUser.LastName, &currentUser.Email, &currentUser.Phone)
 		switch err {
 		//user is in db
@@ -96,7 +97,7 @@ func UpdateCustomer(userId string, updateUser *User) (*User, error) {
 			//update current user struct to reflect provided attributes
 			updatedLocalUser := updateNonEmptyDetails(&currentUser, updateUser)
 			//update the user in db
-			err := updateCustomerDB(userId, updatedLocalUser)
+			err := updateCustomerDB(s.Db, userId, updatedLocalUser)
 			switch err {
 			case nil:
 				return updatedLocalUser, nil

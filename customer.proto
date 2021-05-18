@@ -1,18 +1,10 @@
 syntax = "proto3";
 
 package customer;
-import "google/protobuf/descriptor.proto";
 
-option go_package = "server/";
+option go_package = "grpc/";
 
 
-extend google.protobuf.FieldOptions {
-    bool required = 55555;
-}
-
-extend google.protobuf.MethodOptions {
-    string type = 55556;
-}
 
 message User {
     string id = 1;
@@ -36,33 +28,21 @@ message SearchCustomerRequest {
 }
 
 message CreateUserRequest {
-    User user = 1 [(required) = true];
+    User user = 1;
 }
 
 message UpdateCustomerRequest {
-    string user_id = 1 [(required) = true];
-    User user = 2 [(required) = true];
+    string user_id = 1;
+    User user = 2;
 }
 
 message NoQuery {}
 
 service CustomerService {
-    rpc CreateCustomerService(CreateUserRequest) returns (User) {
-        option (type) = "POST";
-    }
-    rpc GetCustomer(GetCustomerRequest) returns (User) {
-        option (type) = "GET";
-    }
-    rpc SearchCustomer(SearchCustomerRequest) returns (User) {
-        option (type) = "GET";
-    }
-    rpc GetAllCustomers(NoQuery) returns (stream User) {
-        option (type) = "GET";
-    }
-    rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {
-        option (type) = "PUT";
-    }
-    rpc DeleteCustomer(DeleteCustomerRequest) returns (NoQuery) {
-        option (type) = "DELETE";
-    }
+    rpc CreateCustomerService(CreateUserRequest) returns (User) {}
+    rpc GetCustomer(GetCustomerRequest) returns (User) {}
+    rpc SearchCustomer(SearchCustomerRequest) returns (User) {}
+    rpc GetAllCustomers(NoQuery) returns (stream User) {}
+    rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {}
+    rpc DeleteCustomer(DeleteCustomerRequest) returns (NoQuery) {}
 }

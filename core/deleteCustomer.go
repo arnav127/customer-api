@@ -1,13 +1,13 @@
-package server
+package core
 
 import (
 	"errors"
 )
 
-func DeleteCustomer(id *string) error {
+func (s *Service) DeleteCustomer(id *string) error {
 	//var user User
 	const queryString = "delete from users where id=$1 returning *"
-	query, err := Db.Exec(queryString, id)
+	query, err := s.Db.Exec(queryString, id)
 	if err != nil {
 		panic(err)
 	}

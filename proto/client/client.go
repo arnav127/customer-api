@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"gitlab.com/arnavdixit/customer-api/server"
+	"gitlab.com/arnavdixit/customer-api/proto"
 	"google.golang.org/grpc"
 	"io"
 )
@@ -16,16 +16,16 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := server.NewCustomerServiceClient(conn)
-	getreq := server.GetCustomerRequest{Id: "14"}
+	c := proto.NewCustomerServiceClient(conn)
+	getreq := proto.GetCustomerRequest{Id: "14"}
 	resp, err := c.GetCustomer(context.Background(), &getreq)
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println(resp)
 	}
-	var u *server.User
-	r2, err := c.GetAllCustomers(context.Background(), &server.NoQuery{})
+	var u *proto.User
+	r2, err := c.GetAllCustomers(context.Background(), &proto.NoQuery{})
 	if err != nil {
 		panic(err)
 	}

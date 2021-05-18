@@ -1,13 +1,22 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
 	"gitlab.com/arnavdixit/customer-api/proto"
 	"google.golang.org/grpc"
-	"io"
 )
+
+var options = []string{
+	"Create New Customer",
+	"Get Customer by Id",
+	"Get All Customers",
+	"Search Customer by Email and Name",
+	"Update Customer Record",
+	"Delete Existing Customer",
+	"Exit",
+}
+
+var client proto.CustomerServiceClient
 
 func main() {
 	var conn *grpc.ClientConn
@@ -17,25 +26,30 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := proto.NewCustomerServiceClient(conn)
-	getreq := proto.GetCustomerRequest{Id: "14"}
-	resp, err := c.GetCustomer(context.Background(), &getreq)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(resp)
-	}
-	var u *proto.User
-	r2, err := c.GetAllCustomers(context.Background(), &empty.Empty{})
-	if err != nil {
-		panic(err)
-	}
-	for  {
-		u, err = r2.Recv()
-		if err == io.EOF {
-			break
+	client = proto.NewCustomerServiceClient(conn)
+	fmt.Println("Connected to the server!")
+	quit := false
+	for !quit {
+		switch displayMenu() {
+		case 1:
+			create()
+		case 2:
+			getbyid()
+		case 3:
+			getall()
+		case 4:
+			search()
+		case 5:
+			update()
+		case 6:
+			deletecus()
+		case 7:
+			quit = true
+		default:
+			fmt.Println("Please enter correct option!")
 		}
-		fmt.Println(u)
+		fmt.Println("-------------------------------")
 	}
+	fmt.Println("")
 
 }

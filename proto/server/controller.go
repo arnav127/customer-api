@@ -3,30 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/empty"
 	customer_api "gitlab.com/arnavdixit/customer-api"
 	"gitlab.com/arnavdixit/customer-api/proto"
 )
 
 type CustomerServiceController struct {
-	//proto.CustomerServiceServer
 	proto.UnimplementedCustomerServiceServer
 	CustomerService customer_api.Service
 }
-
-//func (ctlr *CustomerServiceController) mustEmbedUnimplementedCustomerServiceServer() {
-//	panic("implement me")
-//}
-
-//func NewCustomerServiceController (CustomerService customer_api.Service) proto.CustomerServiceServer {
-//	return &customerServiceController{
-//		CustomerService: CustomerService
-//	}
-//}
-
-//func (ctrl *customerServiceController)
-//func genUserFromProto
-
-
 
 func genProtoFromUser(user *customer_api.DbUser) *proto.User {
 	protoUser := proto.User{
@@ -73,7 +58,7 @@ func (ctlr *CustomerServiceController) GetCustomer (ctx context.Context, request
 	return protoUser, nil
 }
 
-func (ctlr *CustomerServiceController) GetAllCustomers(query *proto.NoQuery, CustomerServer proto.CustomerService_GetAllCustomersServer) error {
+func (ctlr *CustomerServiceController) GetAllCustomers(query *empty.Empty, CustomerServer proto.CustomerService_GetAllCustomersServer) error {
 	fmt.Println("GET Alllll!!!!")
 	userList := ctlr.CustomerService.ListAllCustomer()
 	for _, user := range *userList {
@@ -105,12 +90,12 @@ func (ctlr *CustomerServiceController) UpdateCustomer (ctx context.Context, requ
 	return protoUser, nil
 }
 
-func (ctlr *CustomerServiceController) DeleteCustomer (ctx context.Context, request *proto.DeleteCustomerRequest) (*proto.NoQuery, error) {
+func (ctlr *CustomerServiceController) DeleteCustomer (ctx context.Context, request *proto.DeleteCustomerRequest) (*empty.Empty, error) {
 	fmt.Print("DeleteCustomer: ")
 	fmt.Println(request.Id)
 	err := ctlr.CustomerService.DeleteCustomer(&request.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &proto.NoQuery{}, nil
+	return &empty.Empty{}, nil
 }

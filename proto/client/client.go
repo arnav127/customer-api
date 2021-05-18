@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/empty"
 	"gitlab.com/arnavdixit/customer-api/proto"
 	"google.golang.org/grpc"
 	"io"
@@ -25,7 +26,7 @@ func main() {
 		fmt.Println(resp)
 	}
 	var u *proto.User
-	r2, err := c.GetAllCustomers(context.Background(), &proto.NoQuery{})
+	r2, err := c.GetAllCustomers(context.Background(), &empty.Empty{})
 	if err != nil {
 		panic(err)
 	}

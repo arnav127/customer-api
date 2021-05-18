@@ -126,7 +126,7 @@ func update() {
 	fmt.Print("Updated Last Name: ")
 	fmt.Scanf("%v", &user.LastName)
 	fmt.Print("Updated Email: ")
-	fmt.Scanf("%c", &user.Email)
+	fmt.Scanf("%v", &user.Email)
 	fmt.Print("Updated Phone: ")
 	fmt.Scanf("%v", &user.Phone)
 

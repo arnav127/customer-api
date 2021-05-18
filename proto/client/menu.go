@@ -83,7 +83,7 @@ func search() {
 
 	fmt.Print("Email of Customer: ")
 	fmt.Scanf("%v", &searchRequest.Email)
-	fmt.Println("First Name of Customer: ")
+	fmt.Print("First Name of Customer: ")
 	fmt.Scanf("%v", &searchRequest.FirstName)
 
 	resp, err := client.SearchCustomer(context.Background(), &searchRequest)
@@ -118,7 +118,7 @@ func update() {
 	var id string
 	fmt.Print("Id of Customer to Update: ")
 	fmt.Scanf("%v", &id)
-
+	fmt.Println("Enter Updated Details(to skip field press enter):")
 	fmt.Print("Updated Id: ")
 	fmt.Scanf("%v", &user.Id)
 	fmt.Print("Updated First Name: ")
@@ -145,34 +145,4 @@ func update() {
 		fmt.Println(Teal("Email: "), Yellow(resp.Email))
 		fmt.Println(Teal("Phone: "), Yellow(resp.Phone))
 	}
-}
-
-func displayMenu() (opt int) {
-	fmt.Println("\n***************************")
-	for id, option := range options {
-		fmt.Println(Red(id+1) + ") " + Green(option))
-	}
-	fmt.Print("Choose appropriate option: ")
-	opt = 0
-	fmt.Scanf("%d", &opt)
-	return
-}
-
-var (
-	Black   = Color("\033[1;30m%s\033[0m")
-	Red     = Color("\033[1;31m%s\033[0m")
-	Green   = Color("\033[1;32m%s\033[0m")
-	Yellow  = Color("\033[1;33m%s\033[0m")
-	Purple  = Color("\033[1;34m%s\033[0m")
-	Magenta = Color("\033[1;35m%s\033[0m")
-	Teal    = Color("\033[1;36m%s\033[0m")
-	White   = Color("\033[1;37m%s\033[0m")
-)
-
-func Color(colorString string) func(...interface{}) string {
-	sprint := func(args ...interface{}) string {
-		return fmt.Sprintf(colorString,
-			fmt.Sprint(args...))
-	}
-	return sprint
 }

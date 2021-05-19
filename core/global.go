@@ -17,6 +17,21 @@ type DbUser struct {
 
 //var Db *sql.DB
 
+func (s *Service) Initdb() {
+	const createTable = "create table if not exist users(" +
+		"id serial primary key," +
+		"FirstName varchar(30) not null," +
+		"LastName varchar(30) not null," +
+		"Email varchar(30) not null unique," +
+		"Phone bigint not null unique" +
+		");"
+
+	_, err := s.Db.Exec(createTable)
+	if err != nil {
+		panic(err)
+	}
+}
+
 // validate : check if the user struct received is valid against set params
 func validate(user *customer_api.DbUser, allowEmpty bool) error {
 	const minNameLength, maxNameLength = 3, 20

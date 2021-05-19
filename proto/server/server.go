@@ -48,6 +48,10 @@ func main() {
 	cs := core.Service{
 		Db: db,
 	}
+
+	//create user schema
+	cs.Initdb()
+
 	s := CustomerServiceController{
 		CustomerService: &cs,
 	}

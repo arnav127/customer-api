@@ -11,6 +11,7 @@ type DbUser struct {
 }
 
 type Service interface {
+	Initdb()
 	CreateCustomer(user *DbUser) (*DbUser, error)
 	GetCustomer(id string) (*DbUser, error)
 	SearchCustomer(email string, firstName string) (*DbUser, error)

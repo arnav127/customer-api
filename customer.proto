@@ -3,45 +3,84 @@ syntax = "proto3";
 package appointy.customer.v2;
 
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+//import "google/api/http.proto";
+import "validate/validate.proto";
 
-option go_package = "proto/";
+option go_package = "/proto";
 
+service CustomerService {
+    //create customer by passing a user message
+    rpc CreateCustomerService(CreateUserRequest) returns (User) {
+        option (google.api.http) = {
+            post: "/v1/user",
+            body: "user"
+        };
+    }
+
+    //get an existing customer by id
+    rpc GetCustomer(GetCustomerRequest) returns (User) {
+        option (google.api.http) = {
+            get: "/v1/user/{id}"
+        };
+    }
+
+    //search a customer by their email and first_name
+    rpc SearchCustomer(SearchCustomerRequest) returns (User) {
+        option (google.api.http) = {
+            get: "/v1/user"
+        };
+    }
+
+    //get a stream of all customers in database
+    rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {
+        option (google.api.http) = {
+            get: "/v1/users"
+        };
+    }
+
+    //update an existing customer by providing a user message and user_id
+    rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {
+        option (google.api.http) = {
+            patch: "/v1/user/{user_id}",
+            body: "user"
+        };
+    }
+
+    //delete a customer by providing their id
+    rpc DeleteCustomer(DeleteCustomerRequest) returns (.google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/user/{id}"
+        };
+    }
+}
 
 message User {
-    string id = 1;
-    string first_name = 2;
-    string last_name = 3;
-    string email = 4;
-    int64 phone = 5;
+    string id = 1 [(validate.rules).string = {ignore_empty: true, max_len: 20}];
+    string first_name = 2 [(validate.rules).string = {ignore_empty: true, min_len: 3, max_len: 20}];
+    string last_name = 3 [(validate.rules).string = {ignore_empty: true, min_len: 3, max_len: 20}];
+    string email = 4 [(validate.rules).string = {email: true, ignore_empty: true}];
+    int64 phone = 5 [(validate.rules).int64 = {gt: 999999999, lt: 10000000000, ignore_empty: true}];
 }
 
 message GetCustomerRequest {
-    string id = 1;
+    string id = 1 [(validate.rules).string = {max_len: 20}];
 }
 
 message DeleteCustomerRequest {
-    string id = 1;
+    string id = 1 [(validate.rules).string = {max_len: 20}];
 }
 
 message SearchCustomerRequest {
-    string email = 1;
-    string first_name = 2;
+    string email = 1[(validate.rules).string = {email: true}];
+    string first_name = 2 [(validate.rules).string = {min_len: 3, max_len: 20}];
 }
 
 message CreateUserRequest {
-    User user = 1;
+    User user = 1 [(validate.rules).message.required = true];
 }
 
 message UpdateCustomerRequest {
-    string user_id = 1;
+    string user_id = 1 [(validate.rules).string = {max_len: 20}];
     User user = 2;
-}
-
-service CustomerService {
-    rpc CreateCustomerService(CreateUserRequest) returns (User) {}
-    rpc GetCustomer(GetCustomerRequest) returns (User) {}
-    rpc SearchCustomer(SearchCustomerRequest) returns (User) {}
-    rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {}
-    rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {}
-    rpc DeleteCustomer(DeleteCustomerRequest) returns (.google.protobuf.Empty) {}
 }

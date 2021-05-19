@@ -1,6 +1,5 @@
 # Customer API
-Basic CRUD Customer API in Golang.  
-View the API documentation here: https://documenter.getpostman.com/view/12544023/TzRX8kDx
+Basic Customer gRPC API written in golang
 
 ## Customer Struct Fields:  
 
@@ -15,8 +14,27 @@ View the API documentation here: https://documenter.getpostman.com/view/12544023
 ## Functionality Provided
 - Create customer
 - Get Customer
+- Get All customers
+- Search customer
 - Update customer
 - Delete customer
-- List All customers
-- Search customer
 
+## Sample Client Screenshots
+
+- ### Create customer
+    ![Create Customer](/images/s1.png)
+
+- ### Get Customer
+    ![Get Customer](/images/s2.png)
+
+- ### Get All Customers
+    ![Get All Customers](/images/s3.png)
+
+- ### Search Customer
+    ![Search Customer](/images/s4.png)
+
+- ### Update Customer
+    ![Update Customer](/images/s5.png)
+
+- ### Delete Customer
+    ![Delete Customer](/images/s6.png)

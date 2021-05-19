@@ -11,24 +11,25 @@ import (
 
 func create() {
 	var user proto.User
-	fmt.Print("Id: ")
+	fmt.Print("\u001B[1;36mId: \u001B[1;33m")
 	fmt.Scanf("%v", &user.Id)
-	fmt.Print("First Name: ")
+	fmt.Print("\u001B[1;36mFirst Name: \u001B[1;33m")
 	fmt.Scanf("%v", &user.FirstName)
-	fmt.Print("Last Name: ")
+	fmt.Print("\u001B[1;36mLast Name: \u001B[1;33m")
 	fmt.Scanf("%v", &user.LastName)
-	fmt.Print("Email: ")
+	fmt.Print("\u001B[1;36mEmail: \u001B[1;33m")
 	fmt.Scanf("%v", &user.Email)
-	fmt.Print("Phone: ")
+	fmt.Print("\u001B[1;36mPhone: \u001B[1;33m")
 	fmt.Scanf("%v", &user.Phone)
+	fmt.Print("\u001B[0m")
 	var createUser proto.CreateUserRequest = proto.CreateUserRequest{User: &user}
 
 	resp, err := client.CreateCustomerService(context.Background(), &createUser)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(Red(err))
 	}
-	fmt.Println("User created: ")
+	fmt.Print(Purple("User created:\n\n"))
 	fmt.Println(Teal("Id: "), Yellow(resp.Id))
 	fmt.Println(Teal("First Name: "), Yellow(resp.FirstName))
 	fmt.Println(Teal("Last Name: "), Yellow(resp.LastName))
@@ -46,9 +47,9 @@ func getall() {
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 5, 15, 0, ' ', tabwriter.Debug)
-	fmt.Println("Customers in database: ")
+	fmt.Print(Purple("Customers in database:\n\n"))
 	fmt.Fprintln(w, Teal("Id"), "\t", Teal("First Name"), "\t", Teal("Last Name"), "\t", Teal("Email"), "\t", Teal("Phone"))
-	fmt.Fprintln(w, Teal("----"), "\t", Teal("----------"), "\t", Teal("---------"), "\t", Teal("-----"), "\t", Teal("----------"))
+	fmt.Fprintln(w, Teal("--"), "\t", Teal("----------"), "\t", Teal("---------"), "\t", Teal("-----"), "\t", Teal("-----"))
 	for {
 		u, err = r2.Recv()
 		if err != nil {
@@ -62,14 +63,16 @@ func getall() {
 func getbyid() {
 	var getCustomer proto.GetCustomerRequest
 
-	fmt.Print("Enter Customer Id: ")
+	fmt.Print("\u001B[1;36mEnter Customer Id: \u001B[1;33m")
 	fmt.Scanf("%s", &getCustomer.Id)
+	fmt.Print("\u001B[0m\n")
 
 	resp, err := client.GetCustomer(context.Background(), &getCustomer)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(Red(err))
 	} else {
+		fmt.Println(Green("Customer found!"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))
 		fmt.Println(Teal("First Name: "), Yellow(resp.FirstName))
 		fmt.Println(Teal("Last Name: "), Yellow(resp.LastName))
@@ -81,16 +84,18 @@ func getbyid() {
 func search() {
 	var searchRequest proto.SearchCustomerRequest
 
-	fmt.Print("Email of Customer: ")
+	fmt.Print("\u001B[1;36mEmail of Customer: \u001B[1;33m")
 	fmt.Scanf("%v", &searchRequest.Email)
-	fmt.Print("First Name of Customer: ")
+	fmt.Print("\u001B[1;36mFirst Name of Customer: \u001B[1;33m")
 	fmt.Scanf("%v", &searchRequest.FirstName)
+	fmt.Print("\u001B[0m\n")
 
 	resp, err := client.SearchCustomer(context.Background(), &searchRequest)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(Red(err))
 	} else {
+		fmt.Println(Green("Customer found!"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))
 		fmt.Println(Teal("First Name: "), Yellow(resp.FirstName))
 		fmt.Println(Teal("Last Name: "), Yellow(resp.LastName))
@@ -102,33 +107,35 @@ func search() {
 func deletecus() {
 	var deleteRequest proto.DeleteCustomerRequest
 
-	fmt.Print("Enter Customer Id: ")
+	fmt.Print("\u001B[1;36mEnter Customer Id: \u001B[1;33m")
 	fmt.Scanf("%s", &deleteRequest.Id)
+	fmt.Print("\u001B[0m\n\n")
 
 	_, err := client.DeleteCustomer(context.Background(), &deleteRequest)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(Red(err))
 	} else {
-		fmt.Println("User deleted!")
+		fmt.Println(Green("User deleted!"))
 	}
 }
 
 func update() {
 	var user proto.User
 	var id string
-	fmt.Print("Id of Customer to Update: ")
+	fmt.Print("\u001B[1;36mId of Customer to Update: \u001B[1;33m")
 	fmt.Scanf("%v", &id)
-	fmt.Println("Enter Updated Details(to skip field press enter):")
-	fmt.Print("Updated Id: ")
+	fmt.Println(Purple("Enter Updated Details(to skip field press enter):"))
+	fmt.Print("\u001B[1;36mUpdated Id: ")
 	fmt.Scanf("%v", &user.Id)
-	fmt.Print("Updated First Name: ")
+	fmt.Print("\u001B[1;36mUpdated First Name: \u001B[1;33m")
 	fmt.Scanf("%v", &user.FirstName)
-	fmt.Print("Updated Last Name: ")
+	fmt.Print("\u001B[1;36mUpdated Last Name: \u001B[1;33m")
 	fmt.Scanf("%v", &user.LastName)
-	fmt.Print("Updated Email: ")
+	fmt.Print("\u001B[1;36mUpdated Email: \u001B[1;33m")
 	fmt.Scanf("%v", &user.Email)
-	fmt.Print("Updated Phone: ")
+	fmt.Print("\u001B[1;36mUpdated Phone: \u001B[1;33m")
 	fmt.Scanf("%v", &user.Phone)
+	fmt.Print("\u001B[0m\n\n")
 
 	var updateRequest proto.UpdateCustomerRequest = proto.UpdateCustomerRequest{
 		UserId: id,
@@ -138,7 +145,7 @@ func update() {
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println("Updated User Details: ")
+		fmt.Print(Green("Updated User Details:\n\n"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))
 		fmt.Println(Teal("First Name: "), Yellow(resp.FirstName))
 		fmt.Println(Teal("Last Name: "), Yellow(resp.LastName))

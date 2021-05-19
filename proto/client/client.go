@@ -46,9 +46,9 @@ func main() {
 		case 7:
 			quit = true
 		default:
-			fmt.Println("Please enter correct option!")
+			fmt.Println(Red("Please enter correct option!"))
 		}
-		fmt.Println("-------------------------------")
+		//fmt.Println(Yellow("-------------------------------"))
 	}
 	fmt.Println("")
 
@@ -58,11 +58,13 @@ func main() {
 func displayMenu() (opt int) {
 	fmt.Println("\n***************************")
 	for id, option := range options {
-		fmt.Println(Red(id+1) + ") " + Green(option))
+		fmt.Println(Purple(id+1) + ") " + Green(option))
 	}
-	fmt.Print("Choose appropriate option: ")
+	fmt.Print(Magenta("Choose appropriate option: "))
 	opt = 0
+	fmt.Print("\u001B[1;34m")
 	fmt.Scanf("%d", &opt)
+	fmt.Print("\u001B[0m\n\n")
 	return
 }
 

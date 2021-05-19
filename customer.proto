@@ -13,7 +13,7 @@ service CustomerService {
     //create customer by passing a user message
     rpc CreateCustomerService(CreateUserRequest) returns (User) {
         option (google.api.http) = {
-            post: "/v1/user",
+            post: "/v2/user",
             body: "user"
         };
     }
@@ -21,28 +21,28 @@ service CustomerService {
     //get an existing customer by id
     rpc GetCustomer(GetCustomerRequest) returns (User) {
         option (google.api.http) = {
-            get: "/v1/user/{id}"
+            get: "/v2/user/{id}"
         };
     }
 
     //search a customer by their email and first_name
     rpc SearchCustomer(SearchCustomerRequest) returns (User) {
         option (google.api.http) = {
-            get: "/v1/user"
+            get: "/v2/user"
         };
     }
 
     //get a stream of all customers in database
     rpc GetAllCustomers(.google.protobuf.Empty) returns (stream User) {
         option (google.api.http) = {
-            get: "/v1/users"
+            get: "/v2/users"
         };
     }
 
     //update an existing customer by providing a user message and user_id
     rpc UpdateCustomer(UpdateCustomerRequest) returns (User) {
         option (google.api.http) = {
-            patch: "/v1/user/{user_id}",
+            patch: "/v2/user/{user_id}",
             body: "user"
         };
     }
@@ -50,7 +50,7 @@ service CustomerService {
     //delete a customer by providing their id
     rpc DeleteCustomer(DeleteCustomerRequest) returns (.google.protobuf.Empty) {
         option (google.api.http) = {
-            delete: "/v1/user/{id}"
+            delete: "/v2/user/{id}"
         };
     }
 }

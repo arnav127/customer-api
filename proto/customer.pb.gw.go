@@ -592,17 +592,17 @@ func RegisterCustomerServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_CustomerService_CreateCustomerService_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_CreateCustomerService_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v2", "user"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_CustomerService_GetCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "user", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_GetCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v2", "user", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_CustomerService_SearchCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_SearchCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v2", "user"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_CustomerService_GetAllCustomers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "users"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_GetAllCustomers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v2", "users"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_CustomerService_UpdateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "user", "user_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_UpdateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v2", "user", "user_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_CustomerService_DeleteCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "user", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_CustomerService_DeleteCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v2", "user", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

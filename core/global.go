@@ -18,7 +18,7 @@ type DbUser struct {
 //var Db *sql.DB
 
 func (s *Service) Initdb() {
-	const createTable = "create table if not exist users(" +
+	const createTable = "create table if not exists users(" +
 		"id serial primary key," +
 		"FirstName varchar(30) not null," +
 		"LastName varchar(30) not null," +

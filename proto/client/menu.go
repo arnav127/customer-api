@@ -28,7 +28,6 @@ func create() {
 
 	if err != nil {
 		fmt.Println(Red(err))
-		return
 	}
 	fmt.Print(Purple("User created:\n\n"))
 	fmt.Println(Teal("Id: "), Yellow(resp.Id))
@@ -72,7 +71,6 @@ func getbyid() {
 
 	if err != nil {
 		fmt.Println(Red(err))
-		return
 	} else {
 		fmt.Println(Green("Customer found!"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))
@@ -96,7 +94,6 @@ func search() {
 
 	if err != nil {
 		fmt.Println(Red(err))
-		return
 	} else {
 		fmt.Println(Green("Customer found!"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))
@@ -117,7 +114,6 @@ func deletecus() {
 	_, err := client.DeleteCustomer(context.Background(), &deleteRequest)
 	if err != nil {
 		fmt.Println(Red(err))
-		return
 	} else {
 		fmt.Println(Green("User deleted!"))
 	}
@@ -148,7 +144,6 @@ func update() {
 	resp, err := client.UpdateCustomer(context.Background(), &updateRequest)
 	if err != nil {
 		fmt.Println(err)
-		return
 	} else {
 		fmt.Print(Green("Updated User Details:\n\n"))
 		fmt.Println(Teal("Id: "), Yellow(resp.Id))

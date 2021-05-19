@@ -38,6 +38,10 @@ func genUserFromProto(request *proto.User) *customer_api.DbUser {
 func (ctlr *CustomerServiceController) CreateCustomerService (ctx context.Context, request *proto.CreateUserRequest) (*proto.User, error) {
 	fmt.Print("CreateCustomerService: ")
 	fmt.Println(request.GetUser())
+	err := request.ValidateAll()
+	if err != nil {
+		return nil, err
+	}
 	createUser := genUserFromProto(request.User)
 	user, err := ctlr.CustomerService.CreateCustomer(createUser)
 	if err != nil {
@@ -50,6 +54,10 @@ func (ctlr *CustomerServiceController) CreateCustomerService (ctx context.Contex
 func (ctlr *CustomerServiceController) GetCustomer (ctx context.Context, request *proto.GetCustomerRequest) (*proto.User, error) {
 	fmt.Print("GetCustomer: ")
 	fmt.Println(request.GetId())
+	err := request.ValidateAll()
+	if err != nil {
+		return nil, err
+	}
 	user, err := ctlr.CustomerService.GetCustomer(request.GetId())
 	if err != nil {
 		return nil, err
@@ -69,6 +77,10 @@ func (ctlr *CustomerServiceController) GetAllCustomers(query *empty.Empty, Custo
 }
 func (ctlr *CustomerServiceController) SearchCustomer (ctx context.Context, request *proto.SearchCustomerRequest) (*proto.User, error) {
 	fmt.Print("SearchCustomer: ")
+	err := request.ValidateAll()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println(request.Email, request.FirstName)
 	user, err := ctlr.CustomerService.SearchCustomer(request.GetEmail(), request.GetFirstName())
 	if err != nil {
@@ -80,6 +92,10 @@ func (ctlr *CustomerServiceController) SearchCustomer (ctx context.Context, requ
 
 func (ctlr *CustomerServiceController) UpdateCustomer (ctx context.Context, request *proto.UpdateCustomerRequest) (*proto.User, error) {
 	fmt.Print("UpdateCustomer: ")
+	err := request.ValidateAll()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println(request.UserId, request.User)
 	dbuser := genUserFromProto(request.User)
 	user, err := ctlr.CustomerService.UpdateCustomer(request.GetUserId(), dbuser)
@@ -92,8 +108,12 @@ func (ctlr *CustomerServiceController) UpdateCustomer (ctx context.Context, requ
 
 func (ctlr *CustomerServiceController) DeleteCustomer (ctx context.Context, request *proto.DeleteCustomerRequest) (*empty.Empty, error) {
 	fmt.Print("DeleteCustomer: ")
+	err := request.ValidateAll()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println(request.Id)
-	err := ctlr.CustomerService.DeleteCustomer(&request.Id)
+	err = ctlr.CustomerService.DeleteCustomer(&request.Id)
 	if err != nil {
 		return nil, err
 	}

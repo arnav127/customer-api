@@ -1,6 +1,6 @@
 # Customer API
-Basic Customer gRPC API written in golang
-
+Basic Customer gRPC API written in golang with CLI Client and grpc Gateway  
+gRPC Gateway API Endpoints: https://documenter.getpostman.com/view/12544023/TzXtJL8X  
 ## Customer Struct Fields:  
 
 | Field    | Type  |  

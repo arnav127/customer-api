@@ -21,11 +21,11 @@ func initService () *sql.DB{
 		panic(err)
 	}
 	return Db
-
 }
 
 
 func genConnectionString() string {
+	//generate connection string for database
 	user := os.Getenv("USER")
 	password := os.Getenv("PASSWORD")
 	dbname := os.Getenv("DBNAME")
@@ -34,12 +34,10 @@ func genConnectionString() string {
 	return fmt.Sprintf("user=%v password=%v dbname=%v port=%v sslmode=%v", user, password, dbname, port, sslmode)
 }
 
-//var db *sql.DB
 
 func main() {
 
 	//connect to the database
-
 	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		panic(err)
@@ -59,6 +57,7 @@ func main() {
 
 	proto.RegisterCustomerServiceServer(grpcServer, &s)
 
+	//serve the grpc server
 	if err := grpcServer.Serve(lis); err != nil {
 		panic(err)
 	}

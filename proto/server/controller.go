@@ -35,6 +35,7 @@ func genUserFromProto(request *proto.User) *customer_api.DbUser {
 	return &createUser
 }
 
+// CreateCustomerService: create a customer service
 func (ctlr *CustomerServiceController) CreateCustomerService (ctx context.Context, request *proto.CreateUserRequest) (*proto.User, error) {
 	fmt.Print("CreateCustomerService: ")
 	fmt.Println(request.GetUser())
@@ -51,6 +52,7 @@ func (ctlr *CustomerServiceController) CreateCustomerService (ctx context.Contex
 	return protoUser, nil
 }
 
+// GetCustomer: get customer by id
 func (ctlr *CustomerServiceController) GetCustomer (ctx context.Context, request *proto.GetCustomerRequest) (*proto.User, error) {
 	fmt.Print("GetCustomer: ")
 	fmt.Println(request.GetId())
@@ -66,8 +68,9 @@ func (ctlr *CustomerServiceController) GetCustomer (ctx context.Context, request
 	return protoUser, nil
 }
 
+// GetAllCustomers: stream all customers
 func (ctlr *CustomerServiceController) GetAllCustomers(query *empty.Empty, CustomerServer proto.CustomerService_GetAllCustomersServer) error {
-	fmt.Println("GET Alllll!!!!")
+	fmt.Println("GET All: ")
 	userList := ctlr.CustomerService.ListAllCustomer()
 	for _, user := range *userList {
 		protoUser := genProtoFromUser(&user)
@@ -75,6 +78,8 @@ func (ctlr *CustomerServiceController) GetAllCustomers(query *empty.Empty, Custo
 	}
 	return nil
 }
+
+// SearchCustomer: search customer by name, email
 func (ctlr *CustomerServiceController) SearchCustomer (ctx context.Context, request *proto.SearchCustomerRequest) (*proto.User, error) {
 	fmt.Print("SearchCustomer: ")
 	err := request.ValidateAll()
@@ -90,6 +95,7 @@ func (ctlr *CustomerServiceController) SearchCustomer (ctx context.Context, requ
 	return protoUser, nil
 }
 
+// UpdateCustomer: update customer details for given customer id
 func (ctlr *CustomerServiceController) UpdateCustomer (ctx context.Context, request *proto.UpdateCustomerRequest) (*proto.User, error) {
 	fmt.Print("UpdateCustomer: ")
 	err := request.ValidateAll()
@@ -106,6 +112,7 @@ func (ctlr *CustomerServiceController) UpdateCustomer (ctx context.Context, requ
 	return protoUser, nil
 }
 
+// DeleteCustomer: delete a customer by id
 func (ctlr *CustomerServiceController) DeleteCustomer (ctx context.Context, request *proto.DeleteCustomerRequest) (*empty.Empty, error) {
 	fmt.Print("DeleteCustomer: ")
 	err := request.ValidateAll()
